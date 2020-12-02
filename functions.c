@@ -216,6 +216,42 @@ void importCatalogue()
     //clear_Screen();
 }
 
+void export_userData(char* username)
+{
+    FILE* output;
+    char ruta[150];
+    char cadena[512];
+    anime* aux =first(faved);
+    snprintf(ruta,sizeof(ruta),"User/Fav/%s%s",username,".csv");
+    output =fopen(ruta,"w");
+    while(aux!=NULL)
+    {
+        snprintf(cadena,sizeof(cadena),"%ld,\"%s\",%s,%d,%s,%s,%d,\"%s\",\"%s\"\n",aux->mal_id,aux->name,aux->type,aux->episodes,aux->duration,aux->rating,aux->year,aux->studio,aux->genre);
+        fputs(cadena,output);
+        aux =next(faved);
+    }
+    fclose(output);
+    snprintf(ruta,sizeof(ruta),"User/Hate/%s%s",username,".csv");
+    output =fopen(ruta,"w");
+    aux =first(hated);
+    while(aux!=NULL)
+    {
+        snprintf(cadena,sizeof(cadena),"%ld,\"%s\",%s,%d,%s,%s,%d,\"%s\",\"%s\"\n",aux->mal_id,aux->name,aux->type,aux->episodes,aux->duration,aux->rating,aux->year,aux->studio,aux->genre);
+        fputs(cadena,output);
+        aux =next(hated);
+    }
+    fclose(output);
+    snprintf(ruta,sizeof(ruta),"User/Watched/%s%s",username,".csv");
+    output =fopen(ruta,"w");
+    aux =first(watched);
+    while(aux!=NULL)
+    {
+        snprintf(cadena,sizeof(cadena),"%ld,\"%s\",%s,%d,%s,%s,%d,\"%s\",\"%s\"\n",aux->mal_id,aux->name,aux->type,aux->episodes,aux->duration,aux->rating,aux->year,aux->studio,aux->genre);
+        fputs(cadena,output);
+        aux =next(watched);
+    }
+    fclose(output);
+}
 void export_top(short int option)
 {
     FILE* output;
@@ -223,24 +259,24 @@ void export_top(short int option)
     char cadena[512];
     if (option==(1))
     {
-        output =fopen("top_fav.csv","w");
-        aux =last_tree(most_faved);
+        output =fopen("User/top_fav.csv","w");
+        aux =firstTreeMap(most_faved);
         while(aux!=NULL) 
         {
             snprintf(cadena,sizeof(cadena),"%ld,\"%s\",%s,%d,%s,%s,%d,\"%s\",\"%s\"\n",aux->mal_id,aux->name,aux->type,aux->episodes,aux->duration,aux->rating,aux->year,aux->studio,aux->genre);
             fputs(cadena,output);
-            aux =prev_tree(most_faved);
+            aux =nextTreeMap(most_faved);
         }
     }
     else
     {
-        output =fopen("top_hate.csv","w");
-        aux =last_tree(most_hated);
+        output =fopen("User/top_hate.csv","w");
+        aux =firstTreeMap(most_hated);
         while(aux!=NULL) 
         {
             snprintf(cadena,sizeof(cadena),"%ld,\"%s\",%s,%d,%s,%s,%d,\"%s\",\"%s\"\n",aux->mal_id,aux->name,aux->type,aux->episodes,aux->duration,aux->rating,aux->year,aux->studio,aux->genre);
             fputs(cadena,output);
-            aux =prev_tree(most_hated);
+            aux =nextTreeMap(most_hated);
         }
     }
    fclose(output);
@@ -266,7 +302,7 @@ void* filteredSearch(void* key, int filter)
     TreeMap* animelist;
     anime* toAdd;
     char option ='\n';
-    int steps;
+    int steps =0;
     char cadena[512];
     switch (filter)
     {
@@ -287,6 +323,7 @@ void* filteredSearch(void* key, int filter)
         }
     }   
     toAdd =firstTreeMap(animelist);
+    scanf("%c",&option);
     while (1)
     {
         for (int i = 0; i < 10; i =(i+1))
@@ -297,7 +334,6 @@ void* filteredSearch(void* key, int filter)
         }
         printf("Escriba el anime a ingresar a la lista de vistos\nEn caso de querer cambiar de pagina presione enter\n");
         scanf("%c",&option);
-        scanf("%c",&option);
         if (option=='x')
         {
             return(NULL);
@@ -306,14 +342,16 @@ void* filteredSearch(void* key, int filter)
         {
             if (option=='\n')
             {
+                steps= steps+10;
                 continue;
             }
             if ((atoi(&option)>=0)&&(atoi(&option)<10))
             {
-                steps=(10-option);
-                for (int i = 0; i <= steps; i=(i+1))
+                steps=(steps+(atoi(&option)));
+                toAdd =firstTreeMap(animelist);
+                for (int i = 0; i < steps; i=(i+1))
                 {
-                    toAdd =prev_tree(animelist);
+                    toAdd =nextTreeMap(animelist);
                 }
                 return(toAdd);
             }
@@ -352,7 +390,42 @@ void* searchFrom_list()
 
 void print_list(int option)
 {
-
+    anime* aux;
+    List* touse;
+    switch (option)
+    {
+        case 1:
+        {
+            touse =(watched);
+            break;
+        }
+        case 2:
+        {
+            touse =(faved);
+            break;
+        }
+        case 3:
+        {
+            touse =(hated);
+            break;
+        }
+    }
+    aux =(first(touse));
+    if (aux == NULL)
+    {
+        printf("Lista Vacia!!!\n");
+        return;
+    }
+    
+    printf("%-5ld │%-50.50s │%-11.11s │%-4d │%-15.15s │%-17.17s │%-4d │%-30.30s │%-30.30s\n",aux->mal_id,aux->name,aux->type,aux->episodes,aux->duration,aux->rating,aux->year,aux->studio,aux->genre);
+    printf("⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼┼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼┼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼┼⎼⎼⎼⎼⎼┼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼┼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼┼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼┼⎼⎼⎼⎼⎼⎼⎼⎼\n");
+    aux =next(touse);
+    while(aux!=NULL) 
+    {
+        printf("%-5.5ld\t│%-50.50s │%-11.11s │%-4.4d │%-15.15s │%-17.17s │%-4.4d │%-30.30s │%-30.30s\n",aux->mal_id,aux->name,aux->type,aux->episodes,aux->duration,aux->rating,aux->year,aux->studio,aux->genre);
+        aux =next(touse);
+    }
+    free(aux);
 }
 
 void non_filteredSearch()

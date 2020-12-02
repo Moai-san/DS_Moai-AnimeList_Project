@@ -25,6 +25,9 @@ int main ()
     importCatalogue();
     importLists(username);
     menu();
+    export_userData(username);
+    export_top(1);
+    export_top(2);
     //int test =2012;
     //aux =filteredSearch(&test,1);
     //print_Catalogue();

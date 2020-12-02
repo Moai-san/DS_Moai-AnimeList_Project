@@ -116,12 +116,13 @@ int menu ()
                         filter_option=3;
                         addTo_list(filter_option,toInsert);
                     }
-                    clear_Screen();
+                    //clear_Screen();
                     break;
                 }
                 case 'c': //caso c, Ver lista
                 {
                     int option;
+                    printf("Que lista desea ver?\n1)lista de anime visto\n2)lista de anime favorito\n3)lista de anime odiado\n");
                     scanf("%d",&option);
                     while (1)
                     {
@@ -147,6 +148,7 @@ int menu ()
                             }
                             default:
                             {
+                                clear_Screen();
                                 printf("Entrada invalida!\nIngrese Opcion nuevamente\n");
                                 scanf("%d",&option);
                                 continue;
@@ -154,7 +156,6 @@ int menu ()
                         }
                         break;
                     }
-                    clear_Screen();
                     break;
                 }
                 case 'd': //caso d, limpiar pantalla
