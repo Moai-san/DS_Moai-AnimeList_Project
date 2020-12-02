@@ -33,6 +33,15 @@ char* sign_up()
     user =fopen(ruta,"w");
     fprintf(user,"%s",password);
     fclose(user);
+    snprintf(ruta,sizeof(ruta),"User/Fav/%s%s",username,".csv");
+    user =fopen(ruta,"w");
+    fclose(user);
+    snprintf(ruta,sizeof(ruta),"User/Hate/%s%s",username,".csv");
+    user =fopen(ruta,"w");
+    fclose(user);
+    snprintf(ruta,sizeof(ruta),"User/Watched/%s%s",username,".csv");
+    user =fopen(ruta,"w");
+    fclose(user);
     return(username);
 }
 char* log_me()
@@ -40,7 +49,7 @@ char* log_me()
     char garbageBin;
     char ruta [31];
     char* correct_password =((char*)calloc(20,(sizeof(char))));
-    FILE* user;
+    FILE* user;    
     short int MAX_ATTEMPTS =(3);
     char* username =((char*)calloc(20,(sizeof(char))));
     char* password =((char*)calloc(20,(sizeof(char))));

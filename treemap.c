@@ -230,18 +230,18 @@ TreeNode * maximum(TreeNode * x)
 
 void * last_tree(TreeMap * tree)
 {
-  Pair* output =((Pair*)calloc(1,sizeof(Pair)));
+  TreeNode* output =((TreeNode*)calloc(1,sizeof(TreeNode)));
   tree->current =(tree->root);
   while (tree->current->right!=NULL)
   {
     tree->current =(tree->current->right);
   }
-  output =createPair((tree->current->key),(tree->current->value));
-  return (output);
+  output =createTreeNode((tree->current->key),(tree->current->value));
+  return (output->value);
 }
 
 void * prev_tree(TreeMap * tree) {
-  Pair* output =((Pair*)calloc(1,sizeof(Pair)));
+  TreeNode* output =((TreeNode*)calloc(1,sizeof(TreeNode)));
   if (tree->current->left==NULL)
   {
     TreeNode* aux =tree->current;
@@ -259,7 +259,7 @@ void * prev_tree(TreeMap * tree) {
     tree->current =aux;
     output->key =(tree->current->key);
     output->value =(tree->current->value);
-    return output;
+    return output->value;
   }
   else
   {

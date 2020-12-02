@@ -4,12 +4,13 @@
 #include "treemap.h"
 #include "login.h"
 #include "functions.c"
-//#include "menu.c"
+#include "menu.c"
 
 int main ()
 {
     short int input =(0);
-    /*char* username =((char*)calloc(20,(sizeof(char))));
+    char* username =((char*)calloc(20,(sizeof(char))));
+    anime* aux;
     while((input!=(1))&&(input!=(2)))
     {
         printf("Desea registrarse? Ingrese 1\nTiene Cuenta? Ingrese 2\n");
@@ -19,9 +20,14 @@ int main ()
     {
         username =sign_up();
     }
-    username =log_me();*/
+    username =log_me();
     init_var();
     importCatalogue();
-    print_Catalogue();
+    importLists(username);
+    menu();
+    //int test =2012;
+    //aux =filteredSearch(&test,1);
+    //print_Catalogue();
+    //en menu , si user quiere add a fav,hate, watch, se ejecutaran 2 fx, primero la busqueda, luego la addTo_list
     return(0);
 }
