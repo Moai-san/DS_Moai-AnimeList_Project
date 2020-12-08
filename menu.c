@@ -23,7 +23,7 @@ void clear_Screen()
 /*Menu (yup, i know that is obvious, but i have to comment that)*/
 int menu ()
 {
-    printf("Bienvenid@ a Moai-AnimeList! OwO\nQue te gustaria hacer hoy?(\'w\')\na)Ver el catalogo de anime\nb)ingresar anime a lista\nc)Ver lista\nd)Limpiar la pantalla\nSi no quieres nada, solo presiona la tecla enter uwu\n");
+    printf("Bienvenid@ a Moai-AnimeList! OwO\nQue te gustaria hacer hoy?(\'w\')\na)Ver el catalogo de anime\nb)ingresar anime a lista\nc)Ver lista\nd)Ver los Tops\ne)Limpiar la pantalla\nSi no quieres nada, solo presiona la tecla enter uwu\n");
     char option;
     short int flag;
     flag =(-1);
@@ -33,7 +33,7 @@ int menu ()
     {
         if (flag==(1))
         {
-            printf("Te gustaria Hacer algo Mas?(\'w\')\na)Ver el catalogo de anime\nb)ingresar anime a lista\nc)Ver lista\nd)Limpiar la pantalla\nSi no quieres nada, solo presiona la tecla enter uwu\n");
+            printf("Te gustaria Hacer algo Mas?(\'w\')\na)Ver el catalogo de anime\nb)ingresar anime a lista\nc)Ver lista\nd)Ver los Tops\ne)Limpiar la pantalla\nSi no quieres nada, solo presiona la tecla enter uwu\n");
         }
         scanf("%c",&option);
             switch (option)
@@ -49,72 +49,107 @@ int menu ()
                     int filter_option;
                     printf("A que lista le gustaria ingresar un anime?\n1)Lista de anime visto\n2)Lista de anime favorito\n3)Lista de anime odiado\n");
                     scanf("%d",&filter_option);
-                    if (filter_option==1)
+                    while(1)
                     {
-                        printf("Le gustaria aplicar algun filtro de busqueda?, a continuacion se mostraran los disponibles\n1)Ver solo anime de \'x\' Año\n2)Ver solo anime de \'x\' Tipo\n3)Ver solo anime de \'x\' Genero\n4)Ver catalogo sin filtrar\n");
-                        scanf("%d",&filter_option);
-                        while (1)
+                        switch (filter_option)
                         {
-                            switch (filter_option)
+                            case 1:
                             {
-                                case 1:
+                                printf("Le gustaria aplicar algun filtro de busqueda?, a continuacion se mostraran los disponibles\n1)Ver solo anime de \'x\' Año\n2)Ver solo anime de \'x\' Tipo\n3)Ver solo anime de \'x\' Genero\n4)Ver catalogo sin filtrar\n");
+                                scanf("%d",&filter_option);
+                                while (1)
                                 {
-                                    int year;
-                                    printf("Ingrese el año a buscar!!!\n");
-                                    scanf("%d",&year);
-                                    clear_Screen();
-                                    toInsert =filteredSearch(&year,filter_option);
+                                    switch (filter_option)
+                                    {
+                                        case 1:
+                                        {
+                                            int year;
+                                            printf("Ingrese el año a buscar!!!\n");
+                                            scanf("%d",&year);
+                                            clear_Screen();
+                                            toInsert =filteredSearch(&year,filter_option);
+                                            break;
+                                        }
+                                        case 2:
+                                        {
+                                            char type[11];
+                                            printf("Ingrese el tipo a buscar!!!\n");
+                                            scanf("%c",&garbageBin);
+                                            scanf("%s",type);
+                                            clear_Screen();
+                                            toInsert =filteredSearch(type,filter_option);
+                                            break;
+                                        }
+                                        case 3:
+                                        {
+                                            char genre[150];
+                                            printf("Ingrese el genero a buscar!!!\n");
+                                            scanf("%c",&garbageBin);
+                                            scanf("%s",genre);
+                                            clear_Screen();
+                                            toInsert =filteredSearch(genre,filter_option);
+                                            break;
+                                        }
+                                        case 4:
+                                        {
+                                            clear_Screen();
+                                            toInsert =non_filteredSearch();
+                                            break;
+                                        }
+                                        default:
+                                            printf("Entrada invalida!\nIngrese Opcion nuevamente\n");
+                                            scanf("%d",&filter_option);
+                                            continue;
+                                    }
                                     break;
                                 }
-                                case 2:
+                                filter_option=1;
+                                if (toInsert!=NULL)
                                 {
-                                    char type[11];
-                                    printf("Ingrese el tipo a buscar!!!\n");
-                                    scanf("%c",&garbageBin);
-                                    scanf("%s",type);
-                                    clear_Screen();
-                                    toInsert =filteredSearch(type,filter_option);
-                                    break;
+                                    addTo_list(filter_option,toInsert);
                                 }
-                                case 3:
+                                else
                                 {
-                                    char genre[150];
-                                    printf("Ingrese el genero a buscar!!!\n");
-                                    scanf("%c",&garbageBin);
-                                    scanf("%s",genre);
-                                    clear_Screen();
-                                    toInsert =filteredSearch(genre,filter_option);
-                                    break;
+                                    printf("No seleccionaste anime asi que no se ingresó nada! :C\n");
                                 }
-                                case 4:
-                                {
-                                    clear_Screen();
-                                    non_filteredSearch();
-                                    break;
-                                }
-                                default:
-                                {
-                                    printf("Entrada invalida!\nIngrese Opcion nuevamente\n");
-                                    scanf("%d",&filter_option);
-                                    continue;
-                                }
+                                break;
                             }
-                            break;
+                            case 2:
+                            {
+                                toInsert =searchFrom_list();
+                                filter_option=2;
+                                if (toInsert!=NULL)
+                                {
+                                    addTo_list(filter_option,toInsert);
+                                    addTo_list(4,toInsert);
+                                }
+                                else
+                                {
+                                    printf("No seleccionaste anime asi que no se ingresó nada! :C\n");
+                                }
+                                break;
+                            }
+                            case 3:
+                            {
+                                toInsert =searchFrom_list();
+                                filter_option=3;
+                                if (toInsert!=NULL)
+                                {
+                                    addTo_list(filter_option,toInsert);
+                                    addTo_list(5,toInsert);
+                                }
+                                else
+                                {
+                                    printf("No seleccionaste anime asi que no se ingresó nada! :C\n");
+                                }
+                                break;
+                            }
+                            default:
+                                printf("OPCION INVALIDA, INTENTE NUEVAMENTE\n");
+                                scanf("%d",&filter_option);
+                                continue;
                         }
-                        filter_option=1;
-                        addTo_list(filter_option,toInsert);
-                    }
-                    if (filter_option==2)
-                    {
-                        toInsert =searchFrom_list();
-                        filter_option=2;
-                        addTo_list(filter_option,toInsert);
-                    }
-                    if (filter_option==3)
-                    {
-                        toInsert =searchFrom_list();
-                        filter_option=3;
-                        addTo_list(filter_option,toInsert);
+                        break;
                     }
                     //clear_Screen();
                     break;
@@ -134,13 +169,13 @@ int menu ()
                                 print_list(1);
                                 break;
                             }
-                            case 3:
+                            case 2:
                             {
                                 clear_Screen();
                                 print_list(2);
                                 break;
                             }   
-                            case 2:
+                            case 3:
                             {
                                 clear_Screen();
                                 print_list(3);
@@ -158,7 +193,32 @@ int menu ()
                     }
                     break;
                 }
-                case 'd': //caso d, limpiar pantalla
+                case 'd': //caso d, recomendaciones
+                {
+                    char option;
+                    scanf("%c",&option);
+                    printf("Que top desea ver?\na)Top Favoritos\nb)Top Odiados\n");
+                    scanf("%c",&option);
+                    while (1)
+                    {
+                        if (option=='a')
+                        {
+                            clear_Screen();
+                            top_loved();
+                            break;
+                        }
+                        if (option=='b')
+                        {
+                            clear_Screen();
+                            top_hated();
+                            break;
+                        }
+                        printf("Entrada Invalida!!!\nIngrese nuevamente\n");
+                        scanf("%c",&option);
+                    }
+                    break;
+                }
+                case 'e': //caso e, limpiar pantalla
                 {
                     clear_Screen();
                     break;

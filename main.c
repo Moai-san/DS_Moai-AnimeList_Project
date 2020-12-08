@@ -8,15 +8,22 @@
 
 int main ()
 {
-    short int input =(0);
+    char input ='\n';
     char* username =((char*)calloc(20,(sizeof(char))));
     anime* aux;
-    while((input!=(1))&&(input!=(2)))
+    while((atol(&input)!=(1))&&(atol(&input)!=(2)))
     {
         printf("Desea registrarse? Ingrese 1\nTiene Cuenta? Ingrese 2\n");
-        scanf("%hd",&input);
+        scanf("%c",&input);
+        if((input!='1')&&(input!='2'))
+        {
+            while (input!='\n')
+            {
+                scanf("%c",&input);
+            }
+        }
     }
-    if (input==1)
+    if ((atol(&input))==1)
     {
         username =sign_up();
     }
@@ -24,13 +31,11 @@ int main ()
     init_var();
     importCatalogue();
     importLists(username);
+    importGlobal_lists();
+    clear_Screen();
     menu();
     export_userData(username);
     export_top(1);
     export_top(2);
-    //int test =2012;
-    //aux =filteredSearch(&test,1);
-    //print_Catalogue();
-    //en menu , si user quiere add a fav,hate, watch, se ejecutaran 2 fx, primero la busqueda, luego la addTo_list
     return(0);
 }

@@ -203,7 +203,6 @@ void* firstMap(HashMap* map)
 {
   if ((map->size)==(0))
   {
-    printf ("Mapa Vacio!");
     return (NULL);
   }
   map->current =(0);
