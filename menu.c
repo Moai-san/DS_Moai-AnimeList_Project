@@ -49,19 +49,19 @@ int menu ()
                     int filter_option;
                     printf("A que lista le gustaria ingresar un anime?\n1)Lista de anime visto\n2)Lista de anime favorito\n3)Lista de anime odiado\n");
                     scanf("%d",&filter_option);
-                    while(1)
+                    while(1)//bucle en el cual se valida el valor ingresado
                     {
-                        switch (filter_option)
+                        switch (filter_option)//switch donde se entra a funcion segun valor ingresado
                         {
-                            case 1:
+                            case 1://si se ingresó un 1, se ingresa a la lista de vistos
                             {
                                 printf("Le gustaria aplicar algun filtro de busqueda?, a continuacion se mostraran los disponibles\n1)Ver solo anime de \'x\' Año\n2)Ver solo anime de \'x\' Tipo\n3)Ver solo anime de \'x\' Genero\n4)Ver catalogo sin filtrar\n");
                                 scanf("%d",&filter_option);
-                                while (1)
+                                while (1) //bucle para validacion de valor ingresado
                                 {
-                                    switch (filter_option)
+                                    switch (filter_option)//switch que define el filtro de busqueda segun opcion seleccionada por usuario
                                     {
-                                        case 1:
+                                        case 1://filtrado por año
                                         {
                                             int year;
                                             printf("Ingrese el año a buscar!!!\n");
@@ -70,7 +70,7 @@ int menu ()
                                             toInsert =filteredSearch(&year,filter_option);
                                             break;
                                         }
-                                        case 2:
+                                        case 2://filtrado por tipo
                                         {
                                             char type[11];
                                             printf("Ingrese el tipo a buscar!!!\n");
@@ -80,7 +80,7 @@ int menu ()
                                             toInsert =filteredSearch(type,filter_option);
                                             break;
                                         }
-                                        case 3:
+                                        case 3://filtrado por genero
                                         {
                                             char genre[150];
                                             printf("Ingrese el genero a buscar!!!\n");
@@ -90,61 +90,61 @@ int menu ()
                                             toInsert =filteredSearch(genre,filter_option);
                                             break;
                                         }
-                                        case 4:
+                                        case 4://ingreso sin filtrar
                                         {
                                             clear_Screen();
                                             toInsert =non_filteredSearch();
                                             break;
                                         }
-                                        default:
+                                        default://en caso de ingresarse un valor distinto a las opciones dadas
                                             printf("Entrada invalida!\nIngrese Opcion nuevamente\n");
                                             scanf("%d",&filter_option);
                                             continue;
                                     }
                                     break;
                                 }
-                                filter_option=1;
-                                if (toInsert!=NULL)
+                                filter_option=1;//una vez almacenado el anime a ingresar a la lista de vistos, se vuelve el valor del filtro a 1 (el 1 indica la lista de vistos)
+                                if (toInsert!=NULL)//si realmente se almacenó un valor en la variable (de tipo anime), esta se ingresa a la lista de vistos
                                 {
                                     addTo_list(filter_option,toInsert);
                                 }
-                                else
+                                else//sinó, se muestra mensaje en pantalla y se vuelve al menú
                                 {
                                     printf("No seleccionaste anime asi que no se ingresó nada! :C\n");
                                 }
                                 break;
                             }
-                            case 2:
+                            case 2://si se ingresó la opcion 2, se accede a la lista de favoritos
                             {
-                                toInsert =searchFrom_list();
-                                filter_option=2;
-                                if (toInsert!=NULL)
+                                toInsert =searchFrom_list();//se guarda la salida de la funcion, la cual es el anime a ingresar
+                                filter_option=2;//se devuelve el filtro al valor 2, ya que este indica la lista de favoritos
+                                if (toInsert!=NULL)//si realmente se almacenó un valor, este se ingresa
                                 {
-                                    addTo_list(filter_option,toInsert);
-                                    addTo_list(4,toInsert);
+                                    addTo_list(filter_option,toInsert);//a lista de favoritos
+                                    addTo_list(4,toInsert);//a lista de tops (esta se modifica con cada anime que se ingresa a favoritos)
                                 }
-                                else
+                                else//sinó, se muestra mensaje
                                 {
                                     printf("No seleccionaste anime asi que no se ingresó nada! :C\n");
                                 }
                                 break;
                             }
-                            case 3:
+                            case 3://si se ingresó la opcion 3, se accede a la lista de odiados
                             {
-                                toInsert =searchFrom_list();
-                                filter_option=3;
-                                if (toInsert!=NULL)
+                                toInsert =searchFrom_list();//se guarda la salida de la funcion, la cual es el anime a ingresar
+                                filter_option=3;//se devuelve el filtro al valor 3, ya que este indica la lista de odiados
+                                if (toInsert!=NULL)//si realmente se almacenó un valor, este se ingresa
                                 {
-                                    addTo_list(filter_option,toInsert);
-                                    addTo_list(5,toInsert);
+                                    addTo_list(filter_option,toInsert);//a lista de odiados
+                                    addTo_list(5,toInsert);//a lista de tops (esta se modifica con cada anime que se ingresa a odiados)
                                 }
-                                else
+                                else//sinó, se muestra mensaje
                                 {
                                     printf("No seleccionaste anime asi que no se ingresó nada! :C\n");
                                 }
                                 break;
                             }
-                            default:
+                            default://en caso de ingresarse un valor distinto a las opciones dadas se solicita ingresar una opcion nuevamente
                                 printf("OPCION INVALIDA, INTENTE NUEVAMENTE\n");
                                 scanf("%d",&filter_option);
                                 continue;
@@ -158,30 +158,30 @@ int menu ()
                 {
                     int option;
                     printf("Que lista desea ver?\n1)lista de anime visto\n2)lista de anime favorito\n3)lista de anime odiado\n");
-                    scanf("%d",&option);
-                    while (1)
+                    scanf("%d",&option);//se solicita al usuario definir que lista quiere ver
+                    while (1)//bucle para validacion
                     {
-                        switch (option)
+                        switch (option)//switch para la opcion ingresada
                         {
-                            case 1:
+                            case 1://se imprime lista de vistos
                             {
                                 clear_Screen();
                                 print_list(1);
                                 break;
                             }
-                            case 2:
+                            case 2://se imprime lista de favoritos
                             {
                                 clear_Screen();
                                 print_list(2);
                                 break;
                             }   
-                            case 3:
+                            case 3://se imprime lista de odiados
                             {
                                 clear_Screen();
                                 print_list(3);
                                 break;
                             }
-                            default:
+                            default://si la opcion es invalida, se solicita ingresar opcion nuevamente
                             {
                                 clear_Screen();
                                 printf("Entrada invalida!\nIngrese Opcion nuevamente\n");
@@ -196,25 +196,31 @@ int menu ()
                 case 'd': //caso d, recomendaciones
                 {
                     char option;
-                    scanf("%c",&option);
+                    scanf("%c",&option);//limpieza de buffer
                     printf("Que top desea ver?\na)Top Favoritos\nb)Top Odiados\n");
-                    scanf("%c",&option);
+                    scanf("%c",&option);//se solicita especificar que top quiere ver
                     while (1)
                     {
-                        if (option=='a')
+                        switch (option)
                         {
-                            clear_Screen();
-                            top_loved();
-                            break;
+                            case 'a'://top favoritos
+                            {
+                                clear_Screen();
+                                top_loved();
+                                break;
+                            }
+                            case 'b'://top odiados
+                            {
+                                clear_Screen();
+                                top_hated();
+                                break;
+                            }
+                            default://entrada invalida
+                                printf("Entrada Invalida!!!\nIngrese nuevamente\n");
+                                scanf("%c",&option);
+                                continue;
                         }
-                        if (option=='b')
-                        {
-                            clear_Screen();
-                            top_hated();
-                            break;
-                        }
-                        printf("Entrada Invalida!!!\nIngrese nuevamente\n");
-                        scanf("%c",&option);
+                        break;
                     }
                     break;
                 }
