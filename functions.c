@@ -259,7 +259,7 @@ void importLists(char username[20])//importar listas de usuario
     const char* aux;
     snprintf(ruta,sizeof(ruta),"User/Fav/%s%s",username,".csv");//lista favoritos
     input =fopen(ruta,"r");
-    while(fgets(line,421,input) != NULL) 
+    while(fgets(line,421,input) != NULL) //creacion de anime e ingreso a lista
     {
         anime* toAdd =create_anime(toAdd);
         aux =(get_csv_field(line,0));
@@ -285,7 +285,7 @@ void importLists(char username[20])//importar listas de usuario
     fclose(input);
     snprintf(ruta,sizeof(ruta),"User/Hate/%s%s",username,".csv");//lista odiados
     input =fopen(ruta,"r");
-    while(fgets(line,421,input) != NULL) 
+    while(fgets(line,421,input) != NULL) //creacion de anime e ingreso a lista
     {
         anime* toAdd =create_anime(toAdd);
         aux =(get_csv_field(line,0));
@@ -311,7 +311,7 @@ void importLists(char username[20])//importar listas de usuario
     fclose(input);
     snprintf(ruta,sizeof(ruta),"User/Watched/%s%s",username,".csv");//lista vistos
     input =fopen(ruta,"r");
-    while(fgets(line,421,input) != NULL) 
+    while(fgets(line,421,input) != NULL) //creacion de anime e ingreso a lista
     {
         anime* toAdd =create_anime(toAdd);
         aux =(get_csv_field(line,0));
@@ -337,7 +337,7 @@ void importLists(char username[20])//importar listas de usuario
     fclose(input);
 }
 
-void importGlobal_lists()
+void importGlobal_lists()//importar tops
 {
     struct dirent *dp;
     FILE* input;
@@ -345,13 +345,13 @@ void importGlobal_lists()
     const char* aux;
     char ruta[300];
     DIR *dir = opendir("User/Fav");
-    while (dp=readdir(dir))
+    while (dp=readdir(dir))//se recorre el directorio favoritos
     {
-        if(strlen(dp->d_name)>5)
+        if(strlen(dp->d_name)>5)//si el nombre del archivo tiene mas de 5 caracteres(1 nulo del final del string, 3 del formato, mas el punto)
         {
             snprintf(ruta,sizeof(ruta),"User/Fav/%s",dp->d_name);
-            input =fopen(ruta,"r");
-            while(fgets(line,421,input) != NULL) 
+            input =fopen(ruta,"r");//se abre el archivo
+            while(fgets(line,421,input) != NULL) //se crea cada anime del archivo y se importa al top
             {
                 anime* toAdd =create_anime(toAdd);
                 aux =(get_csv_field(line,0));
@@ -377,7 +377,8 @@ void importGlobal_lists()
             fclose(input);
         }
     }
-    closedir(dir);
+    closedir(dir);// se cierra el directorio
+    //lo mismo que recien, pero con los odiados
     dir = opendir("User/Hate");
     while (dp=readdir(dir))
     {
@@ -453,7 +454,7 @@ void importCatalogue()
     //clear_Screen();
 }
 
-void export_userData(char* username)
+void export_userData(char* username)//exportar listas del usuario (para no perder los datos despues de ejecutar)
 {
     FILE* output;
     char ruta[150];
@@ -489,7 +490,8 @@ void export_userData(char* username)
     }
     fclose(output);
 }
-void export_top(short int option)
+/*
+void export_top(short int option)//exportar top, esta funcion no se usara ya que esta hecha para el testeo nomas
 {
     FILE* output;
     HashMap* auxMap;
@@ -529,8 +531,9 @@ void export_top(short int option)
     }
    fclose(output);
 }
+*/
 
-void print_Catalogue()
+void print_Catalogue()//imprime catalogo
 {
     char cadena[520];
     char option;
@@ -538,21 +541,22 @@ void print_Catalogue()
     scanf("%c",&option);
     while (1)
     {
-        for (int i = 0; i < 10; i =(i+1))
+        for (int i = 0; i < 10; i =(i+1))//se imprimen 10 animes (0-9)
         {
             if (toAdd==NULL)
             {
                 break;
             }
+            //se crea cadena con todos los atributos del anime, y luego se imprime
             snprintf(cadena,sizeof(cadena),"%ld,%s,%s,%d,%s,%s,%d,%s,%s\n",toAdd->mal_id,toAdd->name,toAdd->type,toAdd->episodes,toAdd->duration,toAdd->rating,toAdd->year,toAdd->studio,toAdd->genre);
             printf("%d - %s\n",i,cadena);
             toAdd =next(catalogue);
         }
         printf("En caso de querer cambiar de pagina presione enter\nEn caso de querer cancelar la ejecucion ingrese cualquier caracter\n");
-        scanf("%c",&option);
+        scanf("%c",&option);//se pregunta al usuario si cancelar ejecucion o seguir cambiando de pagina
         if (option=='\n')
         {
-            clear_Screen();
+            clear_Screen();//limpieza de pantalla
             continue;
         }
         break;
@@ -561,7 +565,7 @@ void print_Catalogue()
     return;
 }
 
-void* filteredSearch(void* key, int filter)
+void* filteredSearch(void* key, int filter)//busqueda con filtros
 {
     TreeMap* animelist;
     anime* toAdd;
@@ -570,7 +574,7 @@ void* filteredSearch(void* key, int filter)
     char cadena[512];
     switch (filter)
     {
-        case 1:
+        case 1://filtro por año
         {
             animelist =searchMap(yearMap,key);
             if (animelist==NULL)
@@ -580,7 +584,7 @@ void* filteredSearch(void* key, int filter)
             }
             break;
         }
-        case 2:
+        case 2://filtro por tipo (pelicula,ova,ona,tv)
         {
             animelist =searchMap(typeMap,key);
             if (animelist==NULL)
@@ -590,7 +594,7 @@ void* filteredSearch(void* key, int filter)
             }
             break;
         }
-        case 3:
+        case 3://filtro por genero
         {
             animelist =searchMap(genreMap,key);
             if (animelist==NULL)
@@ -604,7 +608,7 @@ void* filteredSearch(void* key, int filter)
     toAdd =firstTreeMap(animelist);
     scanf("%c",&option);
     int aux;
-    while (1)
+    while (1)//se muestran anime en intervalos de 10 hasta que el user elija uno
     {
         for (int i = 0; i < 10; i =(i+1))
         {
@@ -627,7 +631,7 @@ void* filteredSearch(void* key, int filter)
             if(option =='\n')
             {
                 steps= steps+10;
-                //clear_Screen();
+                clear_Screen();
                 continue;
             }
             aux =(atoi(&option));
@@ -646,7 +650,7 @@ void* filteredSearch(void* key, int filter)
     return(NULL);
 }
 
-void* searchFrom_list()
+void* searchFrom_list()//buscar desde lista de visto, esta funcion la usan las funciones de agregar a favoritos y odiado, ya que no se puede añadir a favoritos un anime sin haberlo visto
 {
     anime* toAdd;
     int steps;
@@ -698,23 +702,23 @@ void* searchFrom_list()
     return(NULL);
 }
 
-void print_list(int option)
+void print_list(int option)//imprimir lista
 {
     anime* aux;
     List* touse;
     switch (option)
     {
-        case 1:
+        case 1://lista vistos
         {
             touse =(watched);
             break;
         }
-        case 2:
+        case 2://lista favoritos
         {
             touse =(faved);
             break;
         }
-        case 3:
+        case 3://lista odiados
         {
             touse =(hated);
             break;
@@ -735,7 +739,7 @@ void print_list(int option)
     }
 }
 
-void* non_filteredSearch()
+void* non_filteredSearch()//busqueda sin filtrar
 {
     char cadena[520];
     char option;
@@ -781,7 +785,7 @@ void* non_filteredSearch()
     return(NULL);
 }
 
-void top_loved()
+void top_loved()//top favoritos
 {
     if (most_faved->root==NULL)
     {
@@ -822,7 +826,7 @@ void top_loved()
     return;
 }
 
-void top_hated()
+void top_hated()//top odiados
 {
     if (most_hated->root==NULL)
     {
