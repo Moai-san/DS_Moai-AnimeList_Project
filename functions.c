@@ -21,18 +21,19 @@ struct anime
    char* studio; //estudio animacion
    char* genre; //genero anime
 };
-//variables globales
-List* catalogue;
-List* faved;
-List* hated;
-List* watched;
-TreeMap* most_faved;
-TreeMap* most_hated;
-HashMap* genreMap;
-HashMap* yearMap;
-HashMap* typeMap;
 
-void init_var()
+//variables globales
+List* catalogue; //catalogo
+List* faved;//lista de favoritos del usuario logueado
+List* hated;//lista de odiados del usuario logueado
+List* watched;//lista de vistos del usuario logueado
+TreeMap* most_faved;//lista de los mas añadidos a favoritos (top global)
+TreeMap* most_hated;//lista de los mas añadidos a odiados (top global)
+HashMap* genreMap;//mapa para filtrado por genero
+HashMap* yearMap;//mapa para filtrado por año
+HashMap* typeMap;//mapa para filtrado por tipo
+
+void init_var()//inicializacion de variables, se reserva memoria para cada variable global
 {
    catalogue =create_list();
    faved =create_list();
@@ -45,34 +46,35 @@ void init_var()
    typeMap =createMap(6);
 }
 
-anime* create_anime(anime* newanime)
+anime* create_anime(anime* newanime) //crear anime, se reserva memoria para los parametros que lo requieren
 {
     newanime =((anime*)calloc(1,sizeof(anime)));
     newanime->genre =((char*)calloc(140,sizeof(char)));
     newanime->studio =((char*)calloc(140,sizeof(char)));
-    return(newanime);
+    return(newanime);//se retorna el anime creado
 }
 
-void addAnime(anime* toAdd)
+void addAnime(anime* toAdd)//añadir anime a catalogo y vistas filtradas
 {
-    //Declaraciones/inicializaciones
+    //Declaraciones
     TreeMap* type;
     TreeMap* year;
     TreeMap* genre;
+    //se inicializan los 3 arboles como el resultado de la busqueda con clave respectiva (cada nodo del hashmap debe contener un arbol con sus respectivos anime segun filtro)
     type =searchMap(typeMap,toAdd->type);
     year =searchMap(yearMap,&(toAdd->year));
     genre =searchMap(genreMap,toAdd->genre);
-    if (type==NULL)
+    if (type==NULL)//si no se encontró un arbol para la clave dentro de la tabla hash, se crea uno, se inicializa, y una vez con el anime dentro, se introduce a la tabla
     {
         type =createTreeMap(lower_than_int);
         insertTreeMap(type,&(toAdd->mal_id),toAdd);
         insertMap(typeMap,toAdd->type,type);
     }
-    else
+    else//del contrario, solo se inserta
     {
         insertTreeMap(type,&(toAdd->mal_id),toAdd);
     }
-    if (year==NULL)
+    if (year==NULL)//lo mismo que caso anterior, tambien sucede con genero
     {
         year =createTreeMap(lower_than_int);
         insertTreeMap(year,&(toAdd->mal_id),toAdd);
@@ -82,28 +84,49 @@ void addAnime(anime* toAdd)
     {
         insertTreeMap(year,&(toAdd->mal_id),toAdd);
     }
-    if (genre==NULL)
+    if (genre==NULL)//mismo que en tipo
     {
-        type =createTreeMap(lower_than_int);
+        genre =createTreeMap(lower_than_int);
         insertTreeMap(genre,&(toAdd->mal_id),toAdd);
-        insertMap(genreMap,toAdd->genre,genre);
+        for (int i = 0; i < 10; i++)//se subdivide el string en cada genero y luego se ingresa el anime a todas las listas filtradas que corresponda
+        {
+            if (get_csv_field(toAdd->genre,i)==NULL)//si el string recortado es nulo, se rompe el bucle para no generar errores
+            {
+                break;
+            }
+            else//sinó
+            {
+                if (searchMap(genreMap,(char*)get_csv_field(toAdd->genre,i)))//se busca el filtro con el genero respectivo, de estar, solo se inserta el dato
+                {
+                    TreeMap* genreAux =searchMap(genreMap,(char*)get_csv_field(toAdd->genre,i));
+                    insertTreeMap(genreAux,&(toAdd->mal_id),toAdd);
+                }
+                else//de no estar, se crea un arbol, y se ingresa el dato
+                {
+                    TreeMap* genre2 =createTreeMap(lower_than_int);
+                    insertMap(genreMap,(void*)get_csv_field(toAdd->genre,i),genre2);
+                }
+            }
+        }
     }
     else
     {
-        insertTreeMap(genre,&(toAdd->mal_id),toAdd);
+        insertTreeMap(genre,&(toAdd->mal_id),toAdd);//se ingresa dato al arbol
     }
-    push_back(catalogue,toAdd);
+    push_back(catalogue,toAdd);//se añade el anime al catalogo sin filtrar
 }
 
-void* searchFrom_globalList(int option, char* name)
+void* searchFrom_globalList(int option, char* name)//buscar dentro del top
 {
+    //declaraciones
     TreeNode* output =NULL;
     TreeMap* lista;
+    //si opcion ingresada por user es 1, se busca en favoritos
     if (option==1)
     {
         lista =most_faved;
     }
-    else
+    else//sinó en odiados
     {
         lista =most_hated;
     }
@@ -121,26 +144,26 @@ void* searchFrom_globalList(int option, char* name)
     return(output);
 }
 
-void addTo_list(int option, anime* toAdd)
+void addTo_list(int option, anime* toAdd)//añadir a listas
 {
     switch (option)
     {
-        case 1:
+        case 1://lista vistos
         {
             push_back(watched,toAdd);
             break;
         }
-        case 2:
+        case 2://lista favoritos
         {
             push_back(faved,toAdd);
             break;
         }
-        case 3:
+        case 3://lista odiados
         {
             push_back(hated,toAdd);
             break;
         }
-        case 4:
+        case 4://top favoritos
         {
             TreeNode* positionNode =searchFrom_globalList(1,toAdd->name);
             HashMap* topush;
@@ -182,7 +205,7 @@ void addTo_list(int option, anime* toAdd)
             }
             break;
         }
-        case 5:
+        case 5://top odiados
         {
             TreeNode* positionNode =searchFrom_globalList(2,toAdd->name);
             HashMap* topush;
@@ -228,13 +251,13 @@ void addTo_list(int option, anime* toAdd)
 }
 
 
-void importLists(char username[20])
+void importLists(char username[20])//importar listas de usuario
 {
     FILE* input;
     char ruta[150];
     char line[420];
     const char* aux;
-    snprintf(ruta,sizeof(ruta),"User/Fav/%s%s",username,".csv");
+    snprintf(ruta,sizeof(ruta),"User/Fav/%s%s",username,".csv");//lista favoritos
     input =fopen(ruta,"r");
     while(fgets(line,421,input) != NULL) 
     {
@@ -260,7 +283,7 @@ void importLists(char username[20])
         addTo_list(2,toAdd);
     }
     fclose(input);
-    snprintf(ruta,sizeof(ruta),"User/Hate/%s%s",username,".csv");
+    snprintf(ruta,sizeof(ruta),"User/Hate/%s%s",username,".csv");//lista odiados
     input =fopen(ruta,"r");
     while(fgets(line,421,input) != NULL) 
     {
@@ -286,7 +309,7 @@ void importLists(char username[20])
         addTo_list(3,toAdd);
     }
     fclose(input);
-    snprintf(ruta,sizeof(ruta),"User/Watched/%s%s",username,".csv");
+    snprintf(ruta,sizeof(ruta),"User/Watched/%s%s",username,".csv");//lista vistos
     input =fopen(ruta,"r");
     while(fgets(line,421,input) != NULL) 
     {
@@ -604,7 +627,7 @@ void* filteredSearch(void* key, int filter)
             if(option =='\n')
             {
                 steps= steps+10;
-                clear_Screen();
+                //clear_Screen();
                 continue;
             }
             aux =(atoi(&option));
@@ -789,6 +812,7 @@ void top_loved()
             if (recommend==NULL)
             {
                 printf("Se Acabó el top!!! :c\n");
+                fflush(stdin);
                 return;
             }
             continue;
