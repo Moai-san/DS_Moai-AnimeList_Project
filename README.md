@@ -2,7 +2,7 @@
 
 Para compilar use la siguiente la siguiente linea en su respectiva terminal, estando situado en el directorio del trabajo:
 
-gcc -g Main.c -o tarea
+gcc -g main.c -o tarea
 
 Para ejecutar use la siguiente linea en su respectiva terminal, estando situado en el directorio del trabajo:
 
